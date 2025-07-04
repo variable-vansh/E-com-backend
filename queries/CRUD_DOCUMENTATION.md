@@ -17,25 +17,35 @@ This document provides comprehensive CRUD (Create, Read, Update, Delete) operati
 
 ## Setup
 
-```typescript
-import { PrismaClient } from './generated/prisma';
-const prisma = new PrismaClient();
+```javascript
+const {
+  userQueries,
+  categoryQueries,
+  productQueries,
+  inventoryQueries,
+  orderQueries,
+  orderItemQueries,
+  utilityQueries,
+  transactionExamples,
+} = require("./queries/crud-queries.js");
 ```
 
 ## User Operations
 
 ### Create User
-```typescript
+
+```javascript
 const user = await userQueries.createUser({
-  username: 'john_doe',
-  password: 'hashedPassword123',
-  email: 'john@example.com',
-  role: 'CUSTOMER' // Optional: CUSTOMER, ADMIN, SHOPKEEPER
+  username: "john_doe",
+  password: "secure_password",
+  email: "john@example.com",
+  role: "CUSTOMER", // Optional: CUSTOMER, ADMIN, SHOPKEEPER
 });
 ```
 
 ### Read Operations
-```typescript
+
+```javascript
 // Get all users
 const users = await userQueries.getAllUsers();
 
@@ -43,44 +53,47 @@ const users = await userQueries.getAllUsers();
 const user = await userQueries.getUserById(1);
 
 // Get user by email
-const user = await userQueries.getUserByEmail('john@example.com');
+const user = await userQueries.getUserByEmail("john@example.com");
 
 // Get user by username
-const user = await userQueries.getUserByUsername('john_doe');
+const user = await userQueries.getUserByUsername("john_doe");
 ```
 
 ### Update User
-```typescript
+
+```javascript
 const updatedUser = await userQueries.updateUser(1, {
-  username: 'new_username',
-  email: 'newemail@example.com',
-  role: 'ADMIN'
+  username: "new_username",
+  role: "ADMIN",
 });
 ```
 
 ### Delete User
-```typescript
+
+```javascript
 const deletedUser = await userQueries.deleteUser(1);
 ```
 
 ## Category Operations
 
 ### Create Category
-```typescript
+
+```javascript
 // Root category
 const category = await categoryQueries.createCategory({
-  name: 'Electronics'
+  name: "Electronics",
 });
 
 // Subcategory
 const subcategory = await categoryQueries.createCategory({
-  name: 'Smartphones',
-  parentId: 1
+  name: "Smartphones",
+  parentId: 1,
 });
 ```
 
 ### Read Operations
-```typescript
+
+```javascript
 // Get all categories
 const categories = await categoryQueries.getAllCategories();
 
@@ -95,33 +108,37 @@ const subcategories = await categoryQueries.getSubcategories(1);
 ```
 
 ### Update Category
-```typescript
+
+```javascript
 const updatedCategory = await categoryQueries.updateCategory(1, {
-  name: 'Updated Category Name',
-  parentId: 2
+  name: "Updated Category Name",
+  parentId: 2,
 });
 ```
 
 ### Delete Category
-```typescript
+
+```javascript
 const deletedCategory = await categoryQueries.deleteCategory(1);
 ```
 
 ## Product Operations
 
 ### Create Product
-```typescript
+
+```javascript
 const product = await productQueries.createProduct({
-  name: 'iPhone 15 Pro',
-  description: 'Latest iPhone model',
+  name: "iPhone 15 Pro",
+  description: "The latest iPhone model.",
   price: 999.99,
   categoryId: 1,
-  isActive: true
+  isActive: true,
 });
 ```
 
 ### Read Operations
-```typescript
+
+```javascript
 // Get all products
 const products = await productQueries.getAllProducts();
 
@@ -135,37 +152,39 @@ const product = await productQueries.getProductById(1);
 const categoryProducts = await productQueries.getProductsByCategory(1);
 
 // Search products
-const searchResults = await productQueries.searchProducts('iPhone');
+const searchResults = await productQueries.searchProducts("iPhone");
 ```
 
 ### Update Product
-```typescript
+
+```javascript
 const updatedProduct = await productQueries.updateProduct(1, {
-  name: 'Updated Product Name',
-  price: 1099.99,
-  isActive: false
+  name: "Updated Product Name",
+  isActive: false,
 });
 ```
 
 ### Delete Product
-```typescript
+
+```javascript
 const deletedProduct = await productQueries.deleteProduct(1);
 ```
 
 ## Inventory Operations
 
 ### Create Inventory
-```typescript
+
+```javascript
 const inventory = await inventoryQueries.createInventory({
   productId: 1,
   quantity: 100,
-  reservedQuantity: 0,
-  lowStockAlert: 10
+  lowStockAlert: 10,
 });
 ```
 
 ### Read Operations
-```typescript
+
+```javascript
 // Get all inventory
 const inventory = await inventoryQueries.getAllInventory();
 
@@ -177,11 +196,12 @@ const lowStockItems = await inventoryQueries.getLowStockItems();
 ```
 
 ### Update Operations
-```typescript
+
+```javascript
 // Update inventory
 const updatedInventory = await inventoryQueries.updateInventory(1, {
   quantity: 150,
-  lowStockAlert: 15
+  lowStockAlert: 15,
 });
 
 // Reserve stock
@@ -192,191 +212,97 @@ const releasedStock = await inventoryQueries.releaseReservedStock(1, 3);
 ```
 
 ### Delete Inventory
-```typescript
+
+```javascript
 const deletedInventory = await inventoryQueries.deleteInventory(1);
 ```
 
 ## Order Operations
 
 ### Create Order
-```typescript
+
+```javascript
 const order = await orderQueries.createOrder({
-  orderNumber: 'ORD-2025-001',
+  orderNumber: "ORD-2025-001",
   userId: 1,
-  totalAmount: 999.99,
-  customerName: 'John Doe',
-  customerEmail: 'john@example.com',
-  phone: '+1234567890',
-  shippingAddress: '123 Main St',
-  city: 'New York',
-  state: 'NY',
-  postalCode: '10001',
-  country: 'USA',
-  paymentMethod: 'CREDIT_CARD',
-  orderItems: [
-    {
-      productId: 1,
-      quantity: 1,
-      unitPrice: 999.99
-    }
-  ]
+  totalAmount: 1999.98,
+  customerName: "Jane Doe",
+  customerEmail: "jane@example.com",
+  shippingAddress: "456 Market St",
+  city: "San Francisco",
+  state: "CA",
+  postalCode: "94105",
+  orderItems: [{ productId: 1, quantity: 2, unitPrice: 999.99 }],
 });
 ```
 
 ### Read Operations
-```typescript
+
+```javascript
 // Get all orders
 const orders = await orderQueries.getAllOrders();
 
 // Get order by ID
 const order = await orderQueries.getOrderById(1);
 
-// Get order by order number
-const order = await orderQueries.getOrderByOrderNumber('ORD-2025-001');
-
 // Get orders by user ID
 const userOrders = await orderQueries.getOrdersByUserId(1);
 
 // Get orders by status
-const pendingOrders = await orderQueries.getOrdersByStatus('PENDING');
+const pendingOrders = await orderQueries.getOrdersByStatus("PENDING");
 ```
 
-### Update Operations
-```typescript
+### Update Order
+
+```javascript
 // Update order status
-const updatedOrder = await orderQueries.updateOrderStatus(1, 'SHIPPED');
+const updatedOrder = await orderQueries.updateOrderStatus(1, "SHIPPED");
 
 // Update payment status
-const updatedPayment = await orderQueries.updatePaymentStatus(1, 'PAID');
-
-// Update order details
-const updatedOrder = await orderQueries.updateOrder(1, {
-  customerName: 'John Smith',
-  phone: '+1987654321'
-});
+const paidOrder = await orderQueries.updatePaymentStatus(1, "PAID");
 ```
 
 ### Delete Order
-```typescript
+
+```javascript
 const deletedOrder = await orderQueries.deleteOrder(1);
-```
-
-## Order Item Operations
-
-### Create Order Item
-```typescript
-const orderItem = await orderItemQueries.createOrderItem({
-  orderId: 1,
-  productId: 1,
-  quantity: 2,
-  unitPrice: 999.99
-});
-```
-
-### Read Operations
-```typescript
-// Get all order items
-const orderItems = await orderItemQueries.getAllOrderItems();
-
-// Get order item by ID
-const orderItem = await orderItemQueries.getOrderItemById(1);
-
-// Get order items by order ID
-const orderItems = await orderItemQueries.getOrderItemsByOrderId(1);
-
-// Get order items by product ID
-const orderItems = await orderItemQueries.getOrderItemsByProductId(1);
-```
-
-### Update Order Item
-```typescript
-const updatedOrderItem = await orderItemQueries.updateOrderItem(1, {
-  quantity: 3,
-  unitPrice: 899.99
-});
-```
-
-### Delete Order Item
-```typescript
-const deletedOrderItem = await orderItemQueries.deleteOrderItem(1);
-```
-
-## Utility Functions
-
-### Dashboard Statistics
-```typescript
-const stats = await utilityQueries.getDashboardStats();
-// Returns: totalUsers, totalProducts, totalOrders, totalRevenue, pendingOrders, lowStockProducts
-```
-
-### Sales Report
-```typescript
-const startDate = new Date('2025-01-01');
-const endDate = new Date('2025-12-31');
-const salesReport = await utilityQueries.getSalesReport(startDate, endDate);
-```
-
-### Top Selling Products
-```typescript
-const topProducts = await utilityQueries.getTopSellingProducts(10);
-```
-
-## Advanced Queries
-
-### Order Analytics
-```typescript
-const orderAnalytics = await advancedQueries.getOrderAnalytics();
-// Or for specific user:
-const userOrderAnalytics = await advancedQueries.getOrderAnalytics(userId);
-```
-
-### Products with Stock Status
-```typescript
-const productsWithStock = await advancedQueries.getProductsWithStockStatus();
-```
-
-### User Activity Summary
-```typescript
-const userActivity = await advancedQueries.getUserActivitySummary(userId);
-```
-
-### Inventory Alerts
-```typescript
-const inventoryAlerts = await advancedQueries.getInventoryAlerts();
 ```
 
 ## Transaction Examples
 
 ### Create Order with Inventory Update
-```typescript
-const orderWithInventory = await transactionExamples.createOrderWithInventoryUpdate({
-  orderNumber: 'ORD-2025-002',
+
+This example demonstrates a transaction where an order is created and the product inventory is updated atomically.
+
+```javascript
+const orderData = {
+  orderNumber: "ORD-2025-002",
   userId: 1,
-  totalAmount: 1999.98,
-  customerName: 'Jane Doe',
-  customerEmail: 'jane@example.com',
-  shippingAddress: '456 Oak Ave',
-  city: 'Los Angeles',
-  state: 'CA',
-  postalCode: '90210',
-  orderItems: [
-    {
-      productId: 1,
-      quantity: 2,
-      unitPrice: 999.99
-    }
-  ]
-});
+  totalAmount: 999.99,
+  customerName: "John Doe",
+  customerEmail: "john@example.com",
+  shippingAddress: "123 Main St",
+  city: "New York",
+  state: "NY",
+  postalCode: "10001",
+  orderItems: [{ productId: 1, quantity: 1, unitPrice: 999.99 }],
+};
+
+const newOrder = await transactionExamples.createOrderWithInventoryUpdate(
+  orderData
+);
 ```
 
 ## Enums
 
 ### UserRole
+
 - `CUSTOMER`
 - `ADMIN`
 - `SHOPKEEPER`
 
 ### OrderStatus
+
 - `PENDING`
 - `CONFIRMED`
 - `PROCESSING`
@@ -386,6 +312,7 @@ const orderWithInventory = await transactionExamples.createOrderWithInventoryUpd
 - `REFUNDED`
 
 ### PaymentMethod
+
 - `CASH_ON_DELIVERY`
 - `CREDIT_CARD`
 - `DEBIT_CARD`
@@ -394,6 +321,7 @@ const orderWithInventory = await transactionExamples.createOrderWithInventoryUpd
 - `WALLET`
 
 ### PaymentStatus
+
 - `PENDING`
 - `PAID`
 - `FAILED`
@@ -403,12 +331,12 @@ const orderWithInventory = await transactionExamples.createOrderWithInventoryUpd
 
 All CRUD operations should be wrapped in try-catch blocks:
 
-```typescript
+```javascript
 try {
   const user = await userQueries.createUser(userData);
-  console.log('User created:', user);
+  console.log("User created:", user);
 } catch (error) {
-  console.error('Error creating user:', error);
+  console.error("Error creating user:", error);
 }
 ```
 
@@ -416,7 +344,7 @@ try {
 
 Always disconnect Prisma when your application shuts down:
 
-```typescript
+```javascript
 await disconnectPrisma();
 ```
 

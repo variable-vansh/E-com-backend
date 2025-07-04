@@ -1,19 +1,12 @@
-import { PrismaClient } from "../generated/prisma";
-
-const prisma = new PrismaClient();
+const prisma = require("../src/utils/prisma");
 
 // ================================
 // USER CRUD OPERATIONS
 // ================================
 
-export const userQueries = {
+const userQueries = {
   // CREATE - Create a new user
-  async createUser(data: {
-    username: string;
-    password: string;
-    email: string;
-    role?: "CUSTOMER" | "ADMIN" | "SHOPKEEPER";
-  }) {
+  async createUser(data) {
     return await prisma.user.create({
       data,
     });
@@ -29,7 +22,7 @@ export const userQueries = {
   },
 
   // READ - Get user by ID
-  async getUserById(id: number) {
+  async getUserById(id) {
     return await prisma.user.findUnique({
       where: { id },
       include: {
@@ -47,7 +40,7 @@ export const userQueries = {
   },
 
   // READ - Get user by email
-  async getUserByEmail(email: string) {
+  async getUserByEmail(email) {
     return await prisma.user.findUnique({
       where: { email },
       include: {
@@ -57,22 +50,14 @@ export const userQueries = {
   },
 
   // READ - Get user by username
-  async getUserByUsername(username: string) {
+  async getUserByUsername(username) {
     return await prisma.user.findUnique({
       where: { username },
     });
   },
 
   // UPDATE - Update user
-  async updateUser(
-    id: number,
-    data: {
-      username?: string;
-      password?: string;
-      email?: string;
-      role?: "CUSTOMER" | "ADMIN" | "SHOPKEEPER";
-    }
-  ) {
+  async updateUser(id, data) {
     return await prisma.user.update({
       where: { id },
       data,
@@ -80,7 +65,7 @@ export const userQueries = {
   },
 
   // DELETE - Delete user
-  async deleteUser(id: number) {
+  async deleteUser(id) {
     return await prisma.user.delete({
       where: { id },
     });
@@ -91,9 +76,9 @@ export const userQueries = {
 // CATEGORY CRUD OPERATIONS
 // ================================
 
-export const categoryQueries = {
+const categoryQueries = {
   // CREATE - Create a new category
-  async createCategory(data: { name: string; parentId?: number }) {
+  async createCategory(data) {
     return await prisma.category.create({
       data,
     });
@@ -111,7 +96,7 @@ export const categoryQueries = {
   },
 
   // READ - Get category by ID
-  async getCategoryById(id: number) {
+  async getCategoryById(id) {
     return await prisma.category.findUnique({
       where: { id },
       include: {
@@ -139,7 +124,7 @@ export const categoryQueries = {
   },
 
   // READ - Get subcategories of a category
-  async getSubcategories(parentId: number) {
+  async getSubcategories(parentId) {
     return await prisma.category.findMany({
       where: {
         parentId,
@@ -152,13 +137,7 @@ export const categoryQueries = {
   },
 
   // UPDATE - Update category
-  async updateCategory(
-    id: number,
-    data: {
-      name?: string;
-      parentId?: number;
-    }
-  ) {
+  async updateCategory(id, data) {
     return await prisma.category.update({
       where: { id },
       data,
@@ -166,7 +145,7 @@ export const categoryQueries = {
   },
 
   // DELETE - Delete category
-  async deleteCategory(id: number) {
+  async deleteCategory(id) {
     return await prisma.category.delete({
       where: { id },
     });
@@ -177,15 +156,9 @@ export const categoryQueries = {
 // PRODUCT CRUD OPERATIONS
 // ================================
 
-export const productQueries = {
+const productQueries = {
   // CREATE - Create a new product
-  async createProduct(data: {
-    name: string;
-    description?: string;
-    price: number;
-    categoryId: number;
-    isActive?: boolean;
-  }) {
+  async createProduct(data) {
     return await prisma.product.create({
       data: {
         ...data,
@@ -222,7 +195,7 @@ export const productQueries = {
   },
 
   // READ - Get product by ID
-  async getProductById(id: number) {
+  async getProductById(id) {
     return await prisma.product.findUnique({
       where: { id },
       include: {
@@ -238,7 +211,7 @@ export const productQueries = {
   },
 
   // READ - Get products by category
-  async getProductsByCategory(categoryId: number) {
+  async getProductsByCategory(categoryId) {
     return await prisma.product.findMany({
       where: {
         categoryId,
@@ -252,7 +225,7 @@ export const productQueries = {
   },
 
   // READ - Search products by name
-  async searchProducts(searchTerm: string) {
+  async searchProducts(searchTerm) {
     return await prisma.product.findMany({
       where: {
         OR: [
@@ -279,17 +252,8 @@ export const productQueries = {
   },
 
   // UPDATE - Update product
-  async updateProduct(
-    id: number,
-    data: {
-      name?: string;
-      description?: string;
-      price?: number;
-      categoryId?: number;
-      isActive?: boolean;
-    }
-  ) {
-    const updateData: any = { ...data };
+  async updateProduct(id, data) {
+    const updateData = { ...data };
     if (data.price) {
       updateData.price = data.price.toString();
     }
@@ -305,7 +269,7 @@ export const productQueries = {
   },
 
   // DELETE - Delete product
-  async deleteProduct(id: number) {
+  async deleteProduct(id) {
     return await prisma.product.delete({
       where: { id },
     });
@@ -316,14 +280,9 @@ export const productQueries = {
 // INVENTORY CRUD OPERATIONS
 // ================================
 
-export const inventoryQueries = {
+const inventoryQueries = {
   // CREATE - Create inventory for a product
-  async createInventory(data: {
-    productId: number;
-    quantity?: number;
-    reservedQuantity?: number;
-    lowStockAlert?: number;
-  }) {
+  async createInventory(data) {
     return await prisma.inventory.create({
       data,
       include: {
@@ -346,7 +305,7 @@ export const inventoryQueries = {
   },
 
   // READ - Get inventory by product ID
-  async getInventoryByProductId(productId: number) {
+  async getInventoryByProductId(productId) {
     return await prisma.inventory.findUnique({
       where: { productId },
       include: {
@@ -378,14 +337,7 @@ export const inventoryQueries = {
   },
 
   // UPDATE - Update inventory
-  async updateInventory(
-    productId: number,
-    data: {
-      quantity?: number;
-      reservedQuantity?: number;
-      lowStockAlert?: number;
-    }
-  ) {
+  async updateInventory(productId, data) {
     return await prisma.inventory.update({
       where: { productId },
       data,
@@ -396,7 +348,7 @@ export const inventoryQueries = {
   },
 
   // UPDATE - Reserve stock
-  async reserveStock(productId: number, quantity: number) {
+  async reserveStock(productId, quantity) {
     return await prisma.inventory.update({
       where: { productId },
       data: {
@@ -411,7 +363,7 @@ export const inventoryQueries = {
   },
 
   // UPDATE - Release reserved stock
-  async releaseReservedStock(productId: number, quantity: number) {
+  async releaseReservedStock(productId, quantity) {
     return await prisma.inventory.update({
       where: { productId },
       data: {
@@ -426,7 +378,7 @@ export const inventoryQueries = {
   },
 
   // DELETE - Delete inventory
-  async deleteInventory(productId: number) {
+  async deleteInventory(productId) {
     return await prisma.inventory.delete({
       where: { productId },
     });
@@ -437,34 +389,9 @@ export const inventoryQueries = {
 // ORDER CRUD OPERATIONS
 // ================================
 
-export const orderQueries = {
+const orderQueries = {
   // CREATE - Create a new order
-  async createOrder(data: {
-    orderNumber: string;
-    userId: number;
-    totalAmount: number;
-    customerName: string;
-    customerEmail: string;
-    phone?: string;
-    shippingAddress: string;
-    city: string;
-    state: string;
-    postalCode: string;
-    country?: string;
-    paymentMethod?:
-      | "CASH_ON_DELIVERY"
-      | "CREDIT_CARD"
-      | "DEBIT_CARD"
-      | "UPI"
-      | "NET_BANKING"
-      | "WALLET";
-    notes?: string;
-    orderItems: Array<{
-      productId: number;
-      quantity: number;
-      unitPrice: number;
-    }>;
-  }) {
+  async createOrder(data) {
     const { orderItems, ...orderData } = data;
 
     return await prisma.order.create({
@@ -513,7 +440,7 @@ export const orderQueries = {
   },
 
   // READ - Get order by ID
-  async getOrderById(id: number) {
+  async getOrderById(id) {
     return await prisma.order.findUnique({
       where: { id },
       include: {
@@ -533,7 +460,7 @@ export const orderQueries = {
   },
 
   // READ - Get order by order number
-  async getOrderByOrderNumber(orderNumber: string) {
+  async getOrderByOrderNumber(orderNumber) {
     return await prisma.order.findUnique({
       where: { orderNumber },
       include: {
@@ -548,7 +475,7 @@ export const orderQueries = {
   },
 
   // READ - Get orders by user ID
-  async getOrdersByUserId(userId: number) {
+  async getOrdersByUserId(userId) {
     return await prisma.order.findMany({
       where: { userId },
       include: {
@@ -565,16 +492,7 @@ export const orderQueries = {
   },
 
   // READ - Get orders by status
-  async getOrdersByStatus(
-    status:
-      | "PENDING"
-      | "CONFIRMED"
-      | "PROCESSING"
-      | "SHIPPED"
-      | "DELIVERED"
-      | "CANCELLED"
-      | "REFUNDED"
-  ) {
+  async getOrdersByStatus(status) {
     return await prisma.order.findMany({
       where: { status },
       include: {
@@ -592,18 +510,8 @@ export const orderQueries = {
   },
 
   // UPDATE - Update order status
-  async updateOrderStatus(
-    id: number,
-    status:
-      | "PENDING"
-      | "CONFIRMED"
-      | "PROCESSING"
-      | "SHIPPED"
-      | "DELIVERED"
-      | "CANCELLED"
-      | "REFUNDED"
-  ) {
-    const updateData: any = { status };
+  async updateOrderStatus(id, status) {
+    const updateData = { status };
 
     if (status === "SHIPPED") {
       updateData.shippedDate = new Date();
@@ -626,10 +534,7 @@ export const orderQueries = {
   },
 
   // UPDATE - Update payment status
-  async updatePaymentStatus(
-    id: number,
-    paymentStatus: "PENDING" | "PAID" | "FAILED" | "REFUNDED"
-  ) {
+  async updatePaymentStatus(id, paymentStatus) {
     return await prisma.order.update({
       where: { id },
       data: { paymentStatus },
@@ -637,27 +542,7 @@ export const orderQueries = {
   },
 
   // UPDATE - Update order details
-  async updateOrder(
-    id: number,
-    data: {
-      customerName?: string;
-      customerEmail?: string;
-      phone?: string;
-      shippingAddress?: string;
-      city?: string;
-      state?: string;
-      postalCode?: string;
-      country?: string;
-      paymentMethod?:
-        | "CASH_ON_DELIVERY"
-        | "CREDIT_CARD"
-        | "DEBIT_CARD"
-        | "UPI"
-        | "NET_BANKING"
-        | "WALLET";
-      notes?: string;
-    }
-  ) {
+  async updateOrder(id, data) {
     return await prisma.order.update({
       where: { id },
       data,
@@ -673,7 +558,7 @@ export const orderQueries = {
   },
 
   // DELETE - Delete order
-  async deleteOrder(id: number) {
+  async deleteOrder(id) {
     return await prisma.order.delete({
       where: { id },
     });
@@ -684,14 +569,9 @@ export const orderQueries = {
 // ORDER ITEM CRUD OPERATIONS
 // ================================
 
-export const orderItemQueries = {
+const orderItemQueries = {
   // CREATE - Add item to order
-  async createOrderItem(data: {
-    orderId: number;
-    productId: number;
-    quantity: number;
-    unitPrice: number;
-  }) {
+  async createOrderItem(data) {
     return await prisma.orderItem.create({
       data: {
         ...data,
@@ -724,80 +604,9 @@ export const orderItemQueries = {
   },
 
   // READ - Get order item by ID
-  async getOrderItemById(id: number) {
+  async getOrderItemById(id) {
     return await prisma.orderItem.findUnique({
       where: { id },
-      include: {
-        order: {
-          include: {
-            user: true,
-          },
-        },
-        product: {
-          include: {
-            category: true,
-          },
-        },
-      },
-    });
-  },
-
-  // READ - Get order items by order ID
-  async getOrderItemsByOrderId(orderId: number) {
-    return await prisma.orderItem.findMany({
-      where: { orderId },
-      include: {
-        product: {
-          include: {
-            category: true,
-          },
-        },
-      },
-    });
-  },
-
-  // READ - Get order items by product ID
-  async getOrderItemsByProductId(productId: number) {
-    return await prisma.orderItem.findMany({
-      where: { productId },
-      include: {
-        order: {
-          include: {
-            user: true,
-          },
-        },
-      },
-    });
-  },
-
-  // UPDATE - Update order item
-  async updateOrderItem(
-    id: number,
-    data: {
-      quantity?: number;
-      unitPrice?: number;
-    }
-  ) {
-    const updateData: any = { ...data };
-
-    if (data.unitPrice) {
-      updateData.unitPrice = data.unitPrice.toString();
-    }
-
-    if (data.quantity || data.unitPrice) {
-      // Recalculate total price
-      const currentItem = await prisma.orderItem.findUnique({ where: { id } });
-      if (currentItem) {
-        const newQuantity = data.quantity || currentItem.quantity;
-        const newUnitPrice =
-          data.unitPrice || parseFloat(currentItem.unitPrice.toString());
-        updateData.totalPrice = (newQuantity * newUnitPrice).toString();
-      }
-    }
-
-    return await prisma.orderItem.update({
-      where: { id },
-      data: updateData,
       include: {
         order: true,
         product: true,
@@ -805,8 +614,42 @@ export const orderItemQueries = {
     });
   },
 
+  // READ - Get order items by order ID
+  async getOrderItemsByOrderId(orderId) {
+    return await prisma.orderItem.findMany({
+      where: { orderId },
+      include: {
+        product: true,
+      },
+    });
+  },
+
+  // READ - Get order items by product ID
+  async getOrderItemsByProductId(productId) {
+    return await prisma.orderItem.findMany({
+      where: { productId },
+      include: {
+        order: true,
+      },
+    });
+  },
+
+  // UPDATE - Update order item
+  async updateOrderItem(id, data) {
+    const updateData = { ...data };
+    if (data.unitPrice) {
+      const item = await prisma.orderItem.findUnique({ where: { id } });
+      updateData.unitPrice = data.unitPrice.toString();
+      updateData.totalPrice = (item.quantity * data.unitPrice).toString();
+    }
+    return await prisma.orderItem.update({
+      where: { id },
+      data: updateData,
+    });
+  },
+
   // DELETE - Delete order item
-  async deleteOrderItem(id: number) {
+  async deleteOrderItem(id) {
     return await prisma.orderItem.delete({
       where: { id },
     });
@@ -817,76 +660,39 @@ export const orderItemQueries = {
 // UTILITY FUNCTIONS
 // ================================
 
-export const utilityQueries = {
+const utilityQueries = {
   // Get dashboard statistics
   async getDashboardStats() {
-    const [
-      totalUsers,
-      totalProducts,
-      totalOrders,
-      totalRevenue,
-      pendingOrders,
-      lowStockProducts,
-    ] = await Promise.all([
+    const [totalUsers, totalProducts, totalOrders] = await Promise.all([
       prisma.user.count(),
-      prisma.product.count({ where: { isActive: true } }),
+      prisma.product.count(),
       prisma.order.count(),
-      prisma.order.aggregate({
-        _sum: { totalAmount: true },
-        where: { status: { not: "CANCELLED" } },
-      }),
-      prisma.order.count({ where: { status: "PENDING" } }),
-      prisma.inventory.count({
-        where: {
-          quantity: { lte: 10 }, // Assuming 10 is low stock threshold
-        },
-      }),
     ]);
-
-    return {
-      totalUsers,
-      totalProducts,
-      totalOrders,
-      totalRevenue: totalRevenue._sum.totalAmount || 0,
-      pendingOrders,
-      lowStockProducts,
-    };
+    return { totalUsers, totalProducts, totalOrders };
   },
 
   // Get sales report
-  async getSalesReport(startDate: Date, endDate: Date) {
+  async getSalesReport(startDate, endDate) {
     return await prisma.order.findMany({
       where: {
         orderDate: {
           gte: startDate,
           lte: endDate,
         },
-        status: { not: "CANCELLED" },
+        status: "DELIVERED",
       },
       include: {
-        orderItems: {
-          include: {
-            product: {
-              include: {
-                category: true,
-              },
-            },
-          },
-        },
-        user: true,
+        orderItems: true,
       },
     });
   },
 
   // Get top selling products
-  async getTopSellingProducts(limit: number = 10) {
+  async getTopSellingProducts(limit = 10) {
     return await prisma.orderItem.groupBy({
       by: ["productId"],
       _sum: {
         quantity: true,
-      },
-      _count: {
-        productId: true,
       },
       orderBy: {
         _sum: {
@@ -902,68 +708,32 @@ export const utilityQueries = {
 // TRANSACTION EXAMPLE
 // ================================
 
-export const transactionExamples = {
+const transactionExamples = {
   // Example: Create order with inventory management
-  async createOrderWithInventoryUpdate(orderData: {
-    orderNumber: string;
-    userId: number;
-    totalAmount: number;
-    customerName: string;
-    customerEmail: string;
-    phone?: string;
-    shippingAddress: string;
-    city: string;
-    state: string;
-    postalCode: string;
-    orderItems: Array<{
-      productId: number;
-      quantity: number;
-      unitPrice: number;
-    }>;
-  }) {
-    return await prisma.$transaction(async (tx) => {
-      // Check inventory availability
-      for (const item of orderData.orderItems) {
-        const inventory = await tx.inventory.findUnique({
-          where: { productId: item.productId },
-        });
+  async createOrderWithInventoryUpdate(orderData) {
+    const { orderItems, ...rest } = orderData;
 
-        if (!inventory || inventory.quantity < item.quantity) {
-          throw new Error(
-            `Insufficient stock for product ID: ${item.productId}`
-          );
-        }
-      }
-
-      // Create order
+    return prisma.$transaction(async (tx) => {
+      // 1. Create the order
       const order = await tx.order.create({
         data: {
-          orderNumber: orderData.orderNumber,
-          userId: orderData.userId,
-          totalAmount: orderData.totalAmount.toString(),
-          customerName: orderData.customerName,
-          customerEmail: orderData.customerEmail,
-          phone: orderData.phone,
-          shippingAddress: orderData.shippingAddress,
-          city: orderData.city,
-          state: orderData.state,
-          postalCode: orderData.postalCode,
+          ...rest,
+          orderItems: {
+            create: orderItems.map((item) => ({
+              productId: item.productId,
+              quantity: item.quantity,
+              unitPrice: item.unitPrice.toString(),
+              totalPrice: (item.quantity * item.unitPrice).toString(),
+            })),
+          },
+        },
+        include: {
+          orderItems: true,
         },
       });
 
-      // Create order items and update inventory
-      for (const item of orderData.orderItems) {
-        await tx.orderItem.create({
-          data: {
-            orderId: order.id,
-            productId: item.productId,
-            quantity: item.quantity,
-            unitPrice: item.unitPrice.toString(),
-            totalPrice: (item.quantity * item.unitPrice).toString(),
-          },
-        });
-
-        // Update inventory
+      // 2. Update inventory for each order item
+      for (const item of order.orderItems) {
         await tx.inventory.update({
           where: { productId: item.productId },
           data: {
@@ -980,6 +750,18 @@ export const transactionExamples = {
 };
 
 // Don't forget to disconnect Prisma when your application shuts down
-export const disconnectPrisma = async () => {
+const disconnectPrisma = async () => {
   await prisma.$disconnect();
+};
+
+module.exports = {
+  userQueries,
+  categoryQueries,
+  productQueries,
+  inventoryQueries,
+  orderQueries,
+  orderItemQueries,
+  utilityQueries,
+  transactionExamples,
+  disconnectPrisma,
 };
