@@ -1,4 +1,4 @@
-const { orderQueries } = require("../../queries/crud-queries");
+const { orderQueries } = require("../db/queries/crud-queries");
 
 const getAllOrders = async (req, res) => {
   try {

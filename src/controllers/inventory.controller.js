@@ -1,4 +1,4 @@
-const { inventoryQueries } = require("../../queries/crud-queries");
+const { inventoryQueries } = require("../db/queries/crud-queries");
 
 const getAllInventory = async (req, res) => {
   try {

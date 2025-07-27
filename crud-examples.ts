@@ -214,7 +214,7 @@ async function exampleUsage() {
 export const advancedQueries = {
   // Get orders with detailed analytics
   async getOrderAnalytics(userId?: number) {
-    const { default: prisma } = await import("./generated/prisma");
+    const { default: prisma } = await import("./src/db/generated/prisma");
     const client = new prisma.PrismaClient();
 
     return await client.order.findMany({
@@ -255,7 +255,7 @@ export const advancedQueries = {
 
   // Get products with full details and stock status
   async getProductsWithStockStatus() {
-    const { default: prisma } = await import("./generated/prisma");
+    const { default: prisma } = await import("./src/db/generated/prisma");
     const client = new prisma.PrismaClient();
 
     return await client.product.findMany({
@@ -291,7 +291,7 @@ export const advancedQueries = {
 
   // Get user activity summary
   async getUserActivitySummary(userId: number) {
-    const { default: prisma } = await import("./generated/prisma");
+    const { default: prisma } = await import("./src/db/generated/prisma");
     const client = new prisma.PrismaClient();
 
     const [user, orderStats, recentOrders] = await Promise.all([
@@ -343,7 +343,7 @@ export const advancedQueries = {
 
   // Get inventory alerts
   async getInventoryAlerts() {
-    const { default: prisma } = await import("./generated/prisma");
+    const { default: prisma } = await import("./src/db/generated/prisma");
     const client = new prisma.PrismaClient();
 
     return await client.inventory.findMany({
