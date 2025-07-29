@@ -1,33 +1,9 @@
-# E-Commerce Backend CRUD Operations
-
-This document provides comprehensive CRUD (Create, Read, Update, Delete) operations for all tables in the e-commerce Prisma schema.
-
-## Table of Contents
-
-1. [Setup](#setup)
-2. [User Operations](#user-operations)
-3. [Category Operations](#category-operations)
-4. [Product Operations](#product-operations)
-5. [Inventory Operations](#inventory-operations)
-6. [Order Operations](#order-operations)
-7. [Order Item Operations](#order-item-operations)
-8. [Utility Functions](#utility-functions)
-9. [Advanced Queries](#advanced-queries)
-10. [Transaction Examples](#transaction-examples)
+# CRUD Operations Quick Reference
 
 ## Setup
 
 ```javascript
-const {
-  userQueries,
-  categoryQueries,
-  productQueries,
-  inventoryQueries,
-  orderQueries,
-  orderItemQueries,
-  utilityQueries,
-  transactionExamples,
-} = require("./queries/crud-queries.js");
+const { userQueries, productQueries, orderQueries } = require("./index.js");
 ```
 
 ## User Operations

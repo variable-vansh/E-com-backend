@@ -11,11 +11,13 @@ app.use(logger);
 
 app.use(cors());
 
+app.use(express.urlencoded({ extended: false }));
+
 app.use("/api", mainRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`E-commerce backend listening on port ${port}`);
 });

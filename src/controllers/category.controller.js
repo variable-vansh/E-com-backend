@@ -1,4 +1,4 @@
-const { categoryQueries } = require("../db/queries/crud-queries");
+const { categoryQueries } = require("../db/queries");
 
 const getAllCategories = async (req, res) => {
   try {

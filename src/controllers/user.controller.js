@@ -1,4 +1,4 @@
-const { userQueries } = require("../db/queries/crud-queries");
+const { userQueries } = require("../db/queries");
 
 const getAllUsers = async (req, res) => {
   try {

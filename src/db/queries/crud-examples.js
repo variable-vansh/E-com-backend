@@ -6,7 +6,7 @@ const {
   orderQueries,
   transactionExamples,
   disconnectPrisma,
-} = require("./crud-queries.js");
+} = require("./index.js");
 
 // ================================
 // EXAMPLE USAGE OF CRUD OPERATIONS

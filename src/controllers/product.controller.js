@@ -1,4 +1,4 @@
-const { productQueries } = require("../db/queries/crud-queries");
+const { productQueries } = require("../db/queries");
 
 const getAllProducts = async (req, res) => {
   try {

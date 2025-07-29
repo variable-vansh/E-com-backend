@@ -227,7 +227,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\Vansh Mishra\\OneDrive\\Desktop\\projects\\E-com\\E-com backend\\generated\\prisma",
+      "value": "C:\\Users\\Vansh Mishra\\OneDrive\\Desktop\\projects\\E-com\\E-com backend\\src\\db\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -241,12 +241,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\Vansh Mishra\\OneDrive\\Desktop\\projects\\E-com\\E-com backend\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\Vansh Mishra\\OneDrive\\Desktop\\projects\\E-com\\E-com backend\\src\\db\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../../prisma",
   "clientVersion": "6.11.0",
