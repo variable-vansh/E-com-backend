@@ -7,11 +7,12 @@ const {
   updateInventory,
   deleteInventory,
 } = require("../controllers/inventory.controller");
+const { requireAdmin } = require("../middleware");
 
 router.get("/", getAllInventory);
 router.get("/:productId", getInventoryByProductId);
-router.post("/", createInventory);
-router.put("/:productId", updateInventory);
-router.delete("/:productId", deleteInventory);
+router.post("/", requireAdmin, createInventory);
+router.put("/:productId", requireAdmin, updateInventory);
+router.delete("/:productId", requireAdmin, deleteInventory);
 
 module.exports = router;

@@ -7,11 +7,12 @@ const {
   updateOrderStatus,
   deleteOrder,
 } = require("../controllers/order.controller");
+const { requireAdmin } = require("../middleware");
 
 router.get("/", getAllOrders);
 router.get("/:id", getOrderById);
-router.post("/", createOrder);
-router.patch("/:id/status", updateOrderStatus);
-router.delete("/:id", deleteOrder);
+router.post("/", requireAdmin, createOrder);
+router.patch("/:id/status", requireAdmin, updateOrderStatus);
+router.delete("/:id", requireAdmin, deleteOrder);
 
 module.exports = router;

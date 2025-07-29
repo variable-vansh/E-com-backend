@@ -26,6 +26,7 @@ const getProductById = async (req, res) => {
 
 const createProduct = async (req, res) => {
   try {
+    console.log("Creating product with data:", req.body);
     const newProduct = await productQueries.createProduct(req.body);
     res.status(201).json(newProduct);
   } catch (error) {

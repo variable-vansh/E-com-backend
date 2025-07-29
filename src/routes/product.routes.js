@@ -8,12 +8,13 @@ const {
   deleteProduct,
   searchProducts,
 } = require("../controllers/product.controller");
+const { requireAdmin } = require("../middleware");
 
 router.get("/", getAllProducts);
 router.get("/search", searchProducts);
 router.get("/:id", getProductById);
-router.post("/", createProduct);
-router.put("/:id", updateProduct);
-router.delete("/:id", deleteProduct);
+router.post("/", requireAdmin, createProduct);
+router.put("/:id", requireAdmin, updateProduct);
+router.delete("/:id", requireAdmin, deleteProduct);
 
 module.exports = router;
