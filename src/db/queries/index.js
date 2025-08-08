@@ -6,6 +6,7 @@
 const userQueries = require("./user.queries");
 const categoryQueries = require("./category.queries");
 const productQueries = require("./product.queries");
+const grainQueries = require("./grain.queries");
 const inventoryQueries = require("./inventory.queries");
 const orderQueries = require("./order.queries");
 const orderItemQueries = require("./order-item.queries");
@@ -18,6 +19,8 @@ module.exports = {
   userQueries,
   categoryQueries,
   productQueries,
+  grainQueries,
+  grainQueries,
   inventoryQueries,
   orderQueries,
   orderItemQueries,
@@ -28,6 +31,7 @@ module.exports = {
   ...userQueries,
   ...categoryQueries,
   ...productQueries,
+  ...grainQueries,
   ...inventoryQueries,
   ...orderQueries,
   ...orderItemQueries,
