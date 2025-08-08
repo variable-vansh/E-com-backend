@@ -34,9 +34,21 @@ const getGrainById = async (req, res) => {
 const createGrain = async (req, res) => {
   try {
     console.log("Creating grain with data:", req.body);
+    
+    // Validate required fields
+    const { name, price } = req.body;
+    if (!name || price === undefined) {
+      return res.status(400).json({ 
+        error: "Name and price are required fields",
+        received: req.body 
+      });
+    }
+    
     const newGrain = await grainQueries.createGrain(req.body);
+    console.log("Grain created successfully:", newGrain);
     res.status(201).json(newGrain);
   } catch (error) {
+    console.error("Error creating grain:", error);
     res.status(500).json({ error: error.message });
   }
 };

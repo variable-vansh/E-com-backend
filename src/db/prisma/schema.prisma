@@ -21,7 +21,6 @@ model User {
   email     String   @unique
   role      UserRole @default(CUSTOMER)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   // Relations
   orders Order[]

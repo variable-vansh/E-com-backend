@@ -7,10 +7,14 @@ const prisma = require("../../utils/prisma");
 const grainQueries = {
   // CREATE - Create a new grain
   async createGrain(data) {
+    // Remove any fields that aren't in the Grain model
+    const { stock, ...grainData } = data;
+    
     return await prisma.grain.create({
       data: {
-        ...data,
-        price: data.price.toString(), // Convert to Decimal
+        ...grainData,
+        // Prisma handles Decimal conversion automatically
+        price: typeof grainData.price === 'string' ? parseFloat(grainData.price) : grainData.price,
       },
     });
   },
@@ -52,11 +56,14 @@ const grainQueries = {
 
   // UPDATE - Update grain by ID
   async updateGrain(id, data) {
+    // Remove any fields that aren't in the Grain model
+    const { stock, ...grainData } = data;
+    
     return await prisma.grain.update({
       where: { id },
       data: {
-        ...data,
-        price: data.price ? data.price.toString() : undefined,
+        ...grainData,
+        price: grainData.price ? (typeof grainData.price === 'string' ? parseFloat(grainData.price) : grainData.price) : undefined,
       },
     });
   },
