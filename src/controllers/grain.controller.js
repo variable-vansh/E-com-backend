@@ -34,16 +34,16 @@ const getGrainById = async (req, res) => {
 const createGrain = async (req, res) => {
   try {
     console.log("Creating grain with data:", req.body);
-    
+
     // Validate required fields
     const { name, price } = req.body;
     if (!name || price === undefined) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         error: "Name and price are required fields",
-        received: req.body 
+        received: req.body,
       });
     }
-    
+
     const newGrain = await grainQueries.createGrain(req.body);
     console.log("Grain created successfully:", newGrain);
     res.status(201).json(newGrain);
@@ -82,21 +82,6 @@ const deleteGrain = async (req, res) => {
   }
 };
 
-const softDeleteGrain = async (req, res) => {
-  try {
-    const updatedGrain = await grainQueries.softDeleteGrain(
-      parseInt(req.params.id)
-    );
-    res.status(200).json(updatedGrain);
-  } catch (error) {
-    if (error.code === "P2025") {
-      res.status(404).json({ message: "Grain not found" });
-    } else {
-      res.status(500).json({ error: error.message });
-    }
-  }
-};
-
 const searchGrains = async (req, res) => {
   try {
     const { q } = req.query;
@@ -110,21 +95,6 @@ const searchGrains = async (req, res) => {
   }
 };
 
-const getGrainsStats = async (req, res) => {
-  try {
-    const totalCount = await grainQueries.getGrainsCount();
-    const activeCount = await grainQueries.getActiveGrainsCount();
-
-    res.status(200).json({
-      total: totalCount,
-      active: activeCount,
-      inactive: totalCount - activeCount,
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
 module.exports = {
   getAllGrains,
   getActiveGrains,
@@ -132,7 +102,5 @@ module.exports = {
   createGrain,
   updateGrain,
   deleteGrain,
-  softDeleteGrain,
   searchGrains,
-  getGrainsStats,
 };

@@ -9,12 +9,15 @@ const grainQueries = {
   async createGrain(data) {
     // Remove any fields that aren't in the Grain model
     const { stock, ...grainData } = data;
-    
+
     return await prisma.grain.create({
       data: {
         ...grainData,
         // Prisma handles Decimal conversion automatically
-        price: typeof grainData.price === 'string' ? parseFloat(grainData.price) : grainData.price,
+        price:
+          typeof grainData.price === "string"
+            ? parseFloat(grainData.price)
+            : grainData.price,
       },
     });
   },
@@ -58,12 +61,16 @@ const grainQueries = {
   async updateGrain(id, data) {
     // Remove any fields that aren't in the Grain model
     const { stock, ...grainData } = data;
-    
+
     return await prisma.grain.update({
       where: { id },
       data: {
         ...grainData,
-        price: grainData.price ? (typeof grainData.price === 'string' ? parseFloat(grainData.price) : grainData.price) : undefined,
+        price: grainData.price
+          ? typeof grainData.price === "string"
+            ? parseFloat(grainData.price)
+            : grainData.price
+          : undefined,
       },
     });
   },
@@ -72,14 +79,6 @@ const grainQueries = {
   async deleteGrain(id) {
     return await prisma.grain.delete({
       where: { id },
-    });
-  },
-
-  // DELETE - Soft delete (set isActive to false)
-  async softDeleteGrain(id) {
-    return await prisma.grain.update({
-      where: { id },
-      data: { isActive: false },
     });
   },
 
@@ -96,18 +95,6 @@ const grainQueries = {
       orderBy: {
         name: "asc",
       },
-    });
-  },
-
-  // UTILITY - Get grains count
-  async getGrainsCount() {
-    return await prisma.grain.count();
-  },
-
-  // UTILITY - Get active grains count
-  async getActiveGrainsCount() {
-    return await prisma.grain.count({
-      where: { isActive: true },
     });
   },
 };
