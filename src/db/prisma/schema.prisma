@@ -90,55 +90,87 @@ model Inventory {
 
 model Order {
   id            Int         @id @default(autoincrement())
-  orderNumber   String      @unique
-  userId        Int
+  orderNumber   String?     @unique // Made optional for backwards compatibility
+  orderId       String      @unique @default(cuid()) // New unique order ID
+  userId        Int?        // Made optional for guest orders
   status        OrderStatus @default(PENDING)
   totalAmount   Decimal     @db.Decimal(10, 2)
   
-  // Customer Details
+  // Enhanced Customer Details
   customerName  String
-  customerEmail String
-  phone         String?
+  customerEmail String?
+  customerPhone String      // Updated field name to match frontend
+  phone         String?     // Keep old field for backwards compatibility
   
-  // Shipping Address
-  shippingAddress String
-  city            String
-  state           String
-  postalCode      String
+  // Enhanced Shipping Address
+  houseNumber     String?
+  street          String?
+  shippingAddress String?
+  city            String?
+  state           String?
+  postalCode      String?
+  pincode         String?   // Additional pincode field
+  fullAddress     String?   // Complete address string
   country         String @default("India")
+  
+  // Enhanced Pricing Information
+  itemTotal       Float?
+  deliveryFee     Float?
+  discount        Float?
+  grandTotal      Float?
   
   // Order Details
   paymentMethod   PaymentMethod?
   paymentStatus   PaymentStatus @default(PENDING)
+  orderStatus     OrderStatus @default(CONFIRMED) // New field for enhanced status
   notes           String?
   
   // Timestamps
-  orderDate     DateTime @default(now())
-  shippedDate   DateTime?
-  deliveredDate DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  orderDate       DateTime @default(now())
+  orderTimestamp  DateTime? // Frontend provided timestamp
+  shippedDate     DateTime?
+  deliveredDate   DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   // Relations
-  user       User        @relation(fields: [userId], references: [id])
-  orderItems OrderItem[]
+  user           User?         @relation(fields: [userId], references: [id])
+  orderItems     OrderItem[]
+  orderMixItems  OrderMixItem[] // New relation for grain mix items
 
   @@map("orders")
 }
 
 model OrderItem {
-  id        Int     @id @default(autoincrement())
-  orderId   Int
-  productId Int
-  quantity  Int
-  unitPrice Decimal @db.Decimal(10, 2)
-  totalPrice Decimal @db.Decimal(10, 2)
+  id          Int     @id @default(autoincrement())
+  orderId     Int
+  productId   Int?    // Made optional for cases where product might not exist
+  productName String? // Store product name for historical reference
+  quantity    Int
+  unitPrice   Decimal @db.Decimal(10, 2)
+  price       Float?  // Frontend compatible price field
+  totalPrice  Decimal @db.Decimal(10, 2)
 
   // Relations
-  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id])
+  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id])
 
   @@map("order_items")
+}
+
+model OrderMixItem {
+  id          Int   @id @default(autoincrement())
+  orderId     Int
+  grainId     Int?  // Reference to grain, optional for data integrity
+  grainName   String
+  quantity    Float // Can be decimal (e.g., 1.5 kg)
+  price       Float
+  totalPrice  Float
+  
+  // Relations
+  order       Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  @@map("order_mix_items")
 }
 
 // Enums
