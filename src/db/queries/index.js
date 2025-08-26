@@ -10,6 +10,7 @@ const grainQueries = require("./grain.queries");
 const inventoryQueries = require("./inventory.queries");
 const orderQueries = require("./order.queries");
 const orderItemQueries = require("./order-item.queries");
+const promoQueries = require("./promo.queries");
 const utilityQueries = require("./utility.queries");
 const transactionExamples = require("./transaction.queries");
 
@@ -20,10 +21,10 @@ module.exports = {
   categoryQueries,
   productQueries,
   grainQueries,
-  grainQueries,
   inventoryQueries,
   orderQueries,
   orderItemQueries,
+  promoQueries,
   utilityQueries,
   transactionExamples,
 
@@ -35,6 +36,7 @@ module.exports = {
   ...inventoryQueries,
   ...orderQueries,
   ...orderItemQueries,
+  ...promoQueries,
   ...utilityQueries,
   ...transactionExamples,
 

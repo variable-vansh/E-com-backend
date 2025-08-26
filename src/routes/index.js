@@ -9,6 +9,7 @@ const productRouter = require("./product.routes");
 const grainRouter = require("./grain.routes");
 const inventoryRouter = require("./inventory.routes");
 const orderRouter = require("./order.routes");
+const promoRouter = require("./promo.routes");
 
 router.use("/health", healthRouter);
 router.use("/auth", authRouter);
@@ -18,5 +19,6 @@ router.use("/products", productRouter);
 router.use("/grains", grainRouter);
 router.use("/inventory", inventoryRouter);
 router.use("/orders", orderRouter);
+router.use("/promos", promoRouter);
 
 module.exports = router;
