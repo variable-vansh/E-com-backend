@@ -4,6 +4,7 @@ const {
   createNewPromo,
   getPromos,
   getActivePromosPublic,
+  getActivePromosByDeviceType,
   getPromo,
   getStats,
   updateExistingPromo,
@@ -18,6 +19,9 @@ const { requireAdmin } = require("../middleware");
 // ================================
 // Get active promos (no authentication required)
 router.get("/active", getActivePromosPublic);
+
+// Get active promos by device type (no authentication required)
+router.get("/device/:deviceType", getActivePromosByDeviceType);
 
 // ================================
 // PROTECTED ROUTES (Admin only)

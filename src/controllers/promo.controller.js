@@ -7,6 +7,7 @@ const {
   createPromo,
   getAllPromos,
   getActivePromos,
+  getActivePromosByDevice,
   getPromoById,
   updatePromo,
   togglePromoStatus,
@@ -27,7 +28,8 @@ const {
  */
 const createNewPromo = async (req, res) => {
   try {
-    const { imageUrl, title, description, isActive, displayOrder } = req.body;
+    const { imageUrl, title, description, isActive, displayOrder, deviceType } =
+      req.body;
     const userId = req.user?.id; // From auth middleware
 
     // Validate required fields
@@ -55,12 +57,26 @@ const createNewPromo = async (req, res) => {
       });
     }
 
+    // Validate device type if provided
+    const validDeviceTypes = ["DESKTOP", "MOBILE", "BOTH"];
+    if (deviceType && !validDeviceTypes.includes(deviceType)) {
+      return res.status(400).json({
+        error: "Validation failed",
+        message: "Invalid device type. Must be DESKTOP, MOBILE, or BOTH",
+        details: {
+          field: "deviceType",
+          code: "INVALID_VALUE",
+        },
+      });
+    }
+
     const promoData = {
       imageUrl,
       title,
       description,
       isActive,
       displayOrder,
+      deviceType,
       createdById: userId,
     };
 
@@ -90,14 +106,29 @@ const getPromos = async (req, res) => {
   try {
     const {
       active,
+      deviceType,
       limit = 10,
       offset = 0,
       orderBy = "displayOrder",
       order = "asc",
     } = req.query;
 
+    // Validate device type if provided
+    const validDeviceTypes = ["DESKTOP", "MOBILE", "BOTH"];
+    if (deviceType && !validDeviceTypes.includes(deviceType)) {
+      return res.status(400).json({
+        error: "Validation failed",
+        message: "Invalid device type. Must be DESKTOP, MOBILE, or BOTH",
+        details: {
+          field: "deviceType",
+          code: "INVALID_VALUE",
+        },
+      });
+    }
+
     const options = {
       active: active !== undefined ? active === "true" : undefined,
+      deviceType,
       limit: Math.min(parseInt(limit) || 10, 100), // Max 100 results
       offset: parseInt(offset) || 0,
       orderBy,
@@ -122,8 +153,25 @@ const getPromos = async (req, res) => {
  */
 const getActivePromosPublic = async (req, res) => {
   try {
-    const { limit } = req.query;
-    const promos = await getActivePromos(limit ? parseInt(limit) : undefined);
+    const { limit, deviceType } = req.query;
+
+    // Validate device type if provided
+    const validDeviceTypes = ["DESKTOP", "MOBILE", "BOTH"];
+    if (deviceType && !validDeviceTypes.includes(deviceType)) {
+      return res.status(400).json({
+        error: "Validation failed",
+        message: "Invalid device type. Must be DESKTOP, MOBILE, or BOTH",
+        details: {
+          field: "deviceType",
+          code: "INVALID_VALUE",
+        },
+      });
+    }
+
+    const promos = await getActivePromos(
+      limit ? parseInt(limit) : undefined,
+      deviceType
+    );
 
     res.json({
       data: promos,
@@ -133,6 +181,45 @@ const getActivePromosPublic = async (req, res) => {
     res.status(500).json({
       error: "Internal server error",
       message: "Failed to fetch active promos",
+    });
+  }
+};
+
+/**
+ * Get active promos by device type
+ * GET /api/promos/device/:deviceType
+ */
+const getActivePromosByDeviceType = async (req, res) => {
+  try {
+    const { deviceType } = req.params;
+    const { limit } = req.query;
+
+    // Validate device type
+    const validDeviceTypes = ["DESKTOP", "MOBILE", "BOTH"];
+    if (!validDeviceTypes.includes(deviceType)) {
+      return res.status(400).json({
+        error: "Validation failed",
+        message: "Invalid device type. Must be DESKTOP, MOBILE, or BOTH",
+        details: {
+          field: "deviceType",
+          code: "INVALID_VALUE",
+        },
+      });
+    }
+
+    const promos = await getActivePromosByDevice(
+      deviceType,
+      limit ? parseInt(limit) : undefined
+    );
+
+    res.json({
+      data: promos,
+    });
+  } catch (error) {
+    console.error("Error fetching active promos by device:", error);
+    res.status(500).json({
+      error: "Internal server error",
+      message: "Failed to fetch active promos by device type",
     });
   }
 };
@@ -209,7 +296,8 @@ const getStats = async (req, res) => {
 const updateExistingPromo = async (req, res) => {
   try {
     const { id } = req.params;
-    const { imageUrl, title, description, isActive, displayOrder } = req.body;
+    const { imageUrl, title, description, isActive, displayOrder, deviceType } =
+      req.body;
     const userId = req.user?.id;
 
     if (!id || isNaN(id)) {
@@ -247,6 +335,19 @@ const updateExistingPromo = async (req, res) => {
       }
     }
 
+    // Validate device type if provided
+    const validDeviceTypes = ["DESKTOP", "MOBILE", "BOTH"];
+    if (deviceType && !validDeviceTypes.includes(deviceType)) {
+      return res.status(400).json({
+        error: "Validation failed",
+        message: "Invalid device type. Must be DESKTOP, MOBILE, or BOTH",
+        details: {
+          field: "deviceType",
+          code: "INVALID_VALUE",
+        },
+      });
+    }
+
     const updateData = {
       updatedById: userId,
     };
@@ -257,6 +358,7 @@ const updateExistingPromo = async (req, res) => {
     if (description !== undefined) updateData.description = description;
     if (isActive !== undefined) updateData.isActive = isActive;
     if (displayOrder !== undefined) updateData.displayOrder = displayOrder;
+    if (deviceType !== undefined) updateData.deviceType = deviceType;
 
     const promo = await updatePromo(id, updateData);
 
@@ -434,6 +536,7 @@ module.exports = {
   // Read
   getPromos,
   getActivePromosPublic,
+  getActivePromosByDeviceType,
   getPromo,
   getStats,
 

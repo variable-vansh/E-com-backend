@@ -17,6 +17,7 @@ const prisma = require("../../utils/prisma");
  * @param {string} [promoData.description] - Optional description
  * @param {boolean} [promoData.isActive=true] - Active status
  * @param {number} [promoData.displayOrder] - Display order (auto-set if not provided)
+ * @param {string} [promoData.deviceType='BOTH'] - Device type (DESKTOP, MOBILE, BOTH)
  * @param {number} [promoData.createdById] - ID of user creating the promo
  * @returns {Promise<Object>} Created promo
  */
@@ -39,6 +40,7 @@ const createPromo = async (promoData) => {
         description: promoData.description,
         isActive: promoData.isActive ?? true,
         displayOrder,
+        deviceType: promoData.deviceType || "BOTH",
         createdById: promoData.createdById,
         updatedById: promoData.createdById,
       },
@@ -67,6 +69,7 @@ const createPromo = async (promoData) => {
  * Get all promos with pagination and filtering
  * @param {Object} options - Query options
  * @param {boolean} [options.active] - Filter by active status
+ * @param {string} [options.deviceType] - Filter by device type (DESKTOP, MOBILE, BOTH)
  * @param {number} [options.limit=10] - Number of results to return
  * @param {number} [options.offset=0] - Number of results to skip
  * @param {string} [options.orderBy='displayOrder'] - Field to order by
@@ -77,6 +80,7 @@ const getAllPromos = async (options = {}) => {
   try {
     const {
       active,
+      deviceType,
       limit = 10,
       offset = 0,
       orderBy = "displayOrder",
@@ -87,6 +91,9 @@ const getAllPromos = async (options = {}) => {
     const where = {};
     if (active !== undefined) {
       where.isActive = active;
+    }
+    if (deviceType !== undefined) {
+      where.deviceType = deviceType;
     }
 
     // Build order clause
@@ -127,12 +134,22 @@ const getAllPromos = async (options = {}) => {
 /**
  * Get active promos ordered by display order
  * @param {number} [limit] - Maximum number of promos to return
+ * @param {string} [deviceType] - Filter by device type (DESKTOP, MOBILE, BOTH)
  * @returns {Promise<Array>} Array of active promos
  */
-const getActivePromos = async (limit) => {
+const getActivePromos = async (limit, deviceType) => {
   try {
+    const where = { isActive: true };
+
+    // If deviceType is specified, filter by it or include BOTH
+    if (deviceType && deviceType !== "BOTH") {
+      where.OR = [{ deviceType: deviceType }, { deviceType: "BOTH" }];
+    } else if (deviceType === "BOTH") {
+      where.deviceType = "BOTH";
+    }
+
     const promos = await prisma.promo.findMany({
-      where: { isActive: true },
+      where,
       orderBy: { displayOrder: "asc" },
       take: limit,
       include: {
@@ -145,6 +162,37 @@ const getActivePromos = async (limit) => {
     return promos;
   } catch (error) {
     console.error("Error fetching active promos:", error);
+    throw error;
+  }
+};
+
+/**
+ * Get active promos by device type
+ * @param {string} deviceType - Device type (DESKTOP, MOBILE, BOTH)
+ * @param {number} [limit] - Maximum number of promos to return
+ * @returns {Promise<Array>} Array of active promos for device type
+ */
+const getActivePromosByDevice = async (deviceType, limit) => {
+  try {
+    const where = {
+      isActive: true,
+      OR: [{ deviceType: deviceType }, { deviceType: "BOTH" }],
+    };
+
+    const promos = await prisma.promo.findMany({
+      where,
+      orderBy: { displayOrder: "asc" },
+      take: limit,
+      include: {
+        createdBy: {
+          select: { id: true, username: true },
+        },
+      },
+    });
+
+    return promos;
+  } catch (error) {
+    console.error("Error fetching active promos by device:", error);
     throw error;
   }
 };
@@ -368,6 +416,7 @@ module.exports = {
   // Read
   getAllPromos,
   getActivePromos,
+  getActivePromosByDevice,
   getPromoById,
 
   // Update

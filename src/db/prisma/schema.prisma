@@ -31,16 +31,17 @@ model User {
 }
 
 model Promo {
-  id           Int      @id @default(autoincrement())
-  imageUrl     String   @map("image_url") @db.VarChar(500)
-  title        String?  @db.VarChar(255)
+  id           Int        @id @default(autoincrement())
+  imageUrl     String     @map("image_url") @db.VarChar(500)
+  title        String?    @db.VarChar(255)
   description  String?
-  isActive     Boolean  @default(true) @map("is_active")
-  displayOrder Int      @default(0) @map("display_order")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
-  createdById  Int?     @map("created_by")
-  updatedById  Int?     @map("updated_by")
+  isActive     Boolean    @default(true) @map("is_active")
+  displayOrder Int        @default(0) @map("display_order")
+  deviceType   DeviceType @default(BOTH) @map("device_type")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  createdById  Int?       @map("created_by")
+  updatedById  Int?       @map("updated_by")
 
   // Relations
   createdBy User? @relation("PromoCreatedBy", fields: [createdById], references: [id])
@@ -48,6 +49,7 @@ model Promo {
 
   @@index([isActive, displayOrder], map: "idx_promos_active_order")
   @@index([createdAt], map: "idx_promos_created_at")
+  @@index([deviceType], map: "idx_promos_device_type")
   @@map("promos")
 }
 
@@ -201,6 +203,12 @@ enum UserRole {
   CUSTOMER
   ADMIN
   SHOPKEEPER
+}
+
+enum DeviceType {
+  DESKTOP
+  MOBILE
+  BOTH
 }
 
 enum OrderStatus {
