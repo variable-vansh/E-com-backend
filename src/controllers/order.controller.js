@@ -45,6 +45,7 @@ const getOrderById = async (req, res) => {
 const createOrder = async (req, res) => {
   try {
     const {
+      orderId,
       customerInfo,
       cartItems = [],
       cartMix,
@@ -55,6 +56,13 @@ const createOrder = async (req, res) => {
     } = req.body;
 
     // Validate required fields
+    if (!orderId || !/^\d{6}$/.test(orderId)) {
+      return res.status(400).json({
+        success: false,
+        error: "Valid 6-digit order ID is required",
+      });
+    }
+
     if (!customerInfo?.fullName || !customerInfo?.phone) {
       return res.status(400).json({
         success: false,
@@ -84,6 +92,7 @@ const createOrder = async (req, res) => {
     }
 
     const order = await orderQueries.createEnhancedOrder({
+      orderId,
       customerInfo,
       cartItems,
       cartMix,
@@ -108,6 +117,26 @@ const createOrder = async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating order:", error);
+
+    // Handle duplicate orderId error
+    if (error.message.includes("already exists")) {
+      return res.status(409).json({
+        success: false,
+        error: "Conflict",
+        message: error.message,
+      });
+    }
+
+    // Handle Prisma unique constraint violation
+    if (error.code === "P2002" && error.meta?.target?.includes("orderId")) {
+      return res.status(409).json({
+        success: false,
+        error: "Order ID already exists",
+        message:
+          "This order ID is already in use. Please try again with a different order ID.",
+      });
+    }
+
     res.status(500).json({
       success: false,
       error: "Internal server error",

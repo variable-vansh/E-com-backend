@@ -8,6 +8,7 @@ const orderQueries = {
   // CREATE - Enhanced order creation for frontend
   async createEnhancedOrder(data) {
     const {
+      orderId,
       customerInfo,
       cartItems = [],
       cartMix,
@@ -18,9 +19,19 @@ const orderQueries = {
     } = data;
 
     return await prisma.$transaction(async (prisma) => {
+      // Check if orderId already exists
+      const existingOrder = await prisma.order.findUnique({
+        where: { orderId: orderId },
+      });
+
+      if (existingOrder) {
+        throw new Error(`Order ID ${orderId} already exists`);
+      }
+
       // Create the main order
       const newOrder = await prisma.order.create({
         data: {
+          orderId: orderId, // Use the provided 6-digit order ID
           customerName: customerInfo.fullName,
           customerPhone: customerInfo.phone,
           customerEmail: customerInfo.email || null,

@@ -13,7 +13,14 @@ const { requireAdmin } = require("../middleware");
 
 // Input validation middleware
 const validateOrderData = (req, res, next) => {
-  const { customerInfo, pricing } = req.body;
+  const { orderId, customerInfo, pricing } = req.body;
+
+  if (!orderId || !/^\d{6}$/.test(orderId)) {
+    return res.status(400).json({
+      success: false,
+      error: "Valid 6-digit order ID is required",
+    });
+  }
 
   if (!customerInfo?.fullName?.trim()) {
     return res.status(400).json({
