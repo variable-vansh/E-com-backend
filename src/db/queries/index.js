@@ -11,6 +11,7 @@ const inventoryQueries = require("./inventory.queries");
 const orderQueries = require("./order.queries");
 const orderItemQueries = require("./order-item.queries");
 const promoQueries = require("./promo.queries");
+const couponQueries = require("./coupon.queries");
 const utilityQueries = require("./utility.queries");
 const transactionExamples = require("./transaction.queries");
 
@@ -25,6 +26,7 @@ module.exports = {
   orderQueries,
   orderItemQueries,
   promoQueries,
+  couponQueries,
   utilityQueries,
   transactionExamples,
 

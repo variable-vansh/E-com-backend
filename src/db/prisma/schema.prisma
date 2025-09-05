@@ -26,6 +26,7 @@ model User {
   orders       Order[]
   createdPromos Promo[] @relation("PromoCreatedBy")
   updatedPromos Promo[] @relation("PromoUpdatedBy")
+  couponUsages CouponUsage[]
 
   @@map("users")
 }
@@ -81,6 +82,7 @@ model Product {
   category    Category      @relation(fields: [categoryId], references: [id])
   inventory   Inventory?
   orderItems  OrderItem[]
+  coupons     Coupon[]      // Products can be used in additional item coupons
 
   @@map("products")
 }
@@ -162,6 +164,7 @@ model Order {
   user           User?         @relation(fields: [userId], references: [id])
   orderItems     OrderItem[]
   orderMixItems  OrderMixItem[] // New relation for grain mix items
+  couponUsages   CouponUsage[]
 
   @@map("orders")
 }
@@ -198,11 +201,64 @@ model OrderMixItem {
   @@map("order_mix_items")
 }
 
+model Coupon {
+  id                          Int         @id @default(autoincrement())
+  type                        CouponType
+  name                        String      @db.VarChar(255)
+  description                 String?
+  isActive                    Boolean     @default(true) @map("is_active")
+  
+  // Additional Item Coupon Fields
+  productId                   Int?        @map("product_id")
+  minOrderAmount              Decimal?    @db.Decimal(10, 2) @map("min_order_amount")
+  
+  // Discount Code Coupon Fields
+  code                        String?     @unique @db.VarChar(50)
+  discountAmount              Decimal?    @db.Decimal(10, 2) @map("discount_amount")
+  minOrderAmountForDiscount   Decimal?    @db.Decimal(10, 2) @map("min_order_amount_for_discount")
+  
+  // Timestamps
+  createdAt                   DateTime    @default(now()) @map("created_at")
+  updatedAt                   DateTime    @updatedAt @map("updated_at")
+  
+  // Relations
+  product                     Product?    @relation(fields: [productId], references: [id], onDelete: SetNull)
+  couponUsages                CouponUsage[]
+  
+  @@index([type], map: "idx_coupons_type")
+  @@index([code], map: "idx_coupons_code")
+  @@index([isActive], map: "idx_coupons_active")
+  @@index([productId], map: "idx_coupons_product")
+  @@map("coupons")
+}
+
+model CouponUsage {
+  id              Int      @id @default(autoincrement())
+  couponId        Int      @map("coupon_id")
+  orderId         Int      @map("order_id")
+  userId          Int?     @map("user_id")
+  discountApplied Decimal  @db.Decimal(10, 2) @map("discount_applied")
+  createdAt       DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  coupon          Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  user            User?    @relation(fields: [userId], references: [id])
+  
+  @@unique([couponId, orderId])
+  @@map("coupon_usages")
+}
+
 // Enums
 enum UserRole {
   CUSTOMER
   ADMIN
   SHOPKEEPER
+}
+
+enum CouponType {
+  ADDITIONAL_ITEM
+  DISCOUNT_CODE
 }
 
 enum DeviceType {
